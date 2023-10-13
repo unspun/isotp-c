@@ -54,6 +54,9 @@ static int isotp_send_flow_control(IsoTpLink* link, uint8_t flow_status, uint8_t
             3);
 #endif
 
+    if (ret == ISOTP_RET_OK) {
+        link->flow_control_frames_sent++;
+    }
     return ret;
 }
 
@@ -102,6 +105,8 @@ static int isotp_send_first_frame(IsoTpLink* link, uint32_t id) {
     if (ISOTP_RET_OK == ret) {
         link->send_offset += sizeof(message.as.first_frame.data);
         link->send_sn = 1;
+        link->first_frames_sent+=1;
+        link->flow_control_received = 0;
     }
 
     return ret;
@@ -161,6 +166,7 @@ static int isotp_receive_single_frame(IsoTpLink *link, IsoTpCanMessage *message,
 static int isotp_receive_first_frame(IsoTpLink *link, IsoTpCanMessage *message, uint8_t len) {
     uint16_t payload_length;
 
+    link->first_frames_received+=1;
     if (8 != len) {
         isotp_user_debug("First frame should be 8 bytes in length.");
         return ISOTP_RET_LENGTH;
@@ -226,6 +232,8 @@ static int isotp_receive_flow_control_frame(IsoTpLink *link, IsoTpCanMessage *me
         return ISOTP_RET_LENGTH;
     }
 
+    link->flow_control_frames_received++;
+    link->flow_control_received = 1;
     return ISOTP_RET_OK;
 }
 
