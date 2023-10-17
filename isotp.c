@@ -101,12 +101,12 @@ static int isotp_send_first_frame(IsoTpLink* link, uint32_t id) {
     (void) memcpy(message.as.first_frame.data, link->send_buffer, sizeof(message.as.first_frame.data));
 
     /* send message */
+    link->flow_control_received = 0;
     ret = isotp_user_send_can(id, message.as.data_array.ptr, sizeof(message));
     if (ISOTP_RET_OK == ret) {
         link->send_offset += sizeof(message.as.first_frame.data);
         link->send_sn = 1;
         link->first_frames_sent+=1;
-        link->flow_control_received = 0;
     }
 
     return ret;
