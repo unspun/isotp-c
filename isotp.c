@@ -242,10 +242,10 @@ static int isotp_receive_flow_control_frame(IsoTpLink *link, IsoTpCanMessage *me
 ///////////////////////////////////////////////////////
 
 int isotp_send(IsoTpLink *link, const uint8_t payload[], uint16_t size) {
-    return isotp_send_with_id(link, link->send_arbitration_id, payload, size);
+    return isotp_send_with_id(link, link->send_arbitration_id, payload, size, ISO_TP_DEFAULT_RESPONSE_TIMEOUT);
 }
 
-int isotp_send_with_id(IsoTpLink *link, uint32_t id, const uint8_t payload[], uint16_t size) {
+int isotp_send_with_id(IsoTpLink *link, uint32_t id, const uint8_t payload[], uint16_t size, uint32_t response_timeout_ms) {
     int ret;
 
     if (link == 0x0) {
@@ -283,7 +283,7 @@ int isotp_send_with_id(IsoTpLink *link, uint32_t id, const uint8_t payload[], ui
             link->send_st_min = 0;
             link->send_wtf_count = 0;
             link->send_timer_st = isotp_user_get_ms();
-            link->send_timer_bs = isotp_user_get_ms() + ISO_TP_DEFAULT_RESPONSE_TIMEOUT;
+            link->send_timer_bs = isotp_user_get_ms() + response_timeout_ms;
             link->send_protocol_result = ISOTP_PROTOCOL_RESULT_OK;
             link->send_status = ISOTP_SEND_STATUS_INPROGRESS;
         }
