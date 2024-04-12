@@ -121,7 +121,7 @@ int isotp_send(IsoTpLink *link, const uint8_t payload[], uint16_t size);
  * is used only for functional addressing.
  */
 int isotp_send_with_id(IsoTpLink *link, uint32_t id, const uint8_t payload[],
-                       uint16_t size);
+                       uint16_t size, uint32_t response_timeout_ms);
 
 /**
  * @brief Receives and parses the received data and copies the parsed data in to
